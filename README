@@ -1,0 +1,3 @@
+node-marc is a minimal MARC parser for Node.
+
+Inspired by https://github.com/willkurt/Marcql.
