@@ -22,6 +22,15 @@ exports.getDirectoryBuffer = function(recordBuffer, baseAddress) {
   return recordBuffer.slice(24, baseAddress);
 };
 
+exports.getFields = function(recordBuffer, tag) {
+  var directoryBuffer = exports.getDirectoryBuffer(recordBuffer, 
+      exports.getBaseAddress);
+  var scanDirectories = function(directoryBuffer, position) {
+    if (tag === directoryBuffer.toString('ascii', position, position+3)) {
+    }
+  };
+};
+
 exports.map = function(file, cb) {
   var lengthBuffer = new Buffer(5);
   var length;
