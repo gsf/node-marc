@@ -1,3 +1,7 @@
 node-marc is a minimal MARC parser for Node.
 
 Inspired by https://github.com/willkurt/Marcql.
+
+Still working on some basic functionality, including mapping.
+
+Now with a CLI! Try `node cli.js marcdump.mrc`.
