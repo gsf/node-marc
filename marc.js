@@ -22,22 +22,38 @@ exports.getDirectoryBuffer = function(recordBuffer, baseAddress) {
   return recordBuffer.slice(24, baseAddress);
 };
 
-exports.getFields = function(recordBuffer, tag) {
-  var directoryBuffer = exports.getDirectoryBuffer(recordBuffer, 
-      exports.getBaseAddress);
-  var scanDirectories = function(directoryBuffer, position) {
-    if (tag === directoryBuffer.toString('ascii', position, position+3)) {
-    }
+exports.mapFields = function(recordBuffer, cb) {
+  var baseAddress = exports.getBaseAddress(exports.getLeaderBuffer(recordBuffer));
+  var directoryBuffer = exports.getDirectoryBuffer(recordBuffer, baseAddress);
+  var tag, fieldLength, fieldPosition, field;
+  var scanDirectories = function(position) {
+    if (position == directoryBuffer.length-1) return;
+    tag = directoryBuffer.toString('ascii', position, position+3);
+    fieldLength = directoryBuffer.toString('ascii', position+3, position+7);
+    fieldLength = parseInt(fieldLength, 10);
+    fieldPosition = directoryBuffer.toString('ascii', position+7, position+12);
+    fieldPosition = parseInt(fieldPosition, 10);
+    field = recordBuffer.slice(baseAddress+fieldPosition, baseAddress+fieldPosition+fieldLength);
+    cb(tag, field);
+    scanDirectories(position+12);
   };
+  scanDirectories(0);
+};
+
+exports.fieldParts = function(field, cb) {
+  var parts = field.toString('utf8', 0, field.length-1).split(DELIMITER);
+  var indicator = parts[0];
+  var rest = parts.slice(1);
+  var subfields = [];
+  for (var i=0; i<rest.length; i++) {
+    subfields.push([rest[i][0], rest[i].slice(1)]);
+  }
+  cb(indicator, subfields);
 };
 
 exports.map = function(file, cb) {
   var lengthBuffer = new Buffer(5);
   var length;
-  //var leaderBuffer = new Buffer(LEADER_LENGTH);
-  //var leader;
-  //var directoryBuffer = new Buffer(DIRECTORY_LENGTH);
-  //var directory;
   var recordBuffer = new Buffer(RECORD_LENGTH);
   //var record;
   //var base;
