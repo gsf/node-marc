@@ -60,8 +60,8 @@ exports.map = function(file, cb) {
   });
 };
 
-// for a really quick total count of all the records in a file
-exports.total = function(file, cb) {
+// for a really quick count of all the records in a file
+exports.count = function(file, cb) {
   var lengthBuffer = new Buffer(5);
   var length;
   var count = 0;
